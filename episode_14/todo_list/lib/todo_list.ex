@@ -1,4 +1,8 @@
 defmodule TodoList do
+  @moduledoc """
+  Simple Todo list application. User can create a list with todo items and mark those items as done.
+  """
+
   use GenServer
 
   ## Client API
@@ -7,7 +11,7 @@ defmodule TodoList do
   Starts the Todolist Genserver
   """
   def start_link do
-    {:ok, todos} = GenServer.start_link(__MODULE__, :ok, [])
+    {:ok, _todos} = GenServer.start_link(__MODULE__, :ok, [])
   end
 
   @doc """
@@ -17,8 +21,15 @@ defmodule TodoList do
     GenServer.call(pid, :get)
   end
 
-  @doc """
+  @doc ~S"""
   Add an item to the Todo list
+
+  ## Examples
+
+    iex> {:ok, todo_list} = TodoList.start_link
+    iex> TodoList.add(todo_list, "study")
+    iex> TodoList.get(todo_list)
+    %{"study" => :not_done}
   """
   def add(pid, todo) do
     GenServer.cast(pid, {:add, todo})
