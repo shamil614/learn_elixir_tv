@@ -1,24 +1,40 @@
 # TodoList
 
-**TODO: Add description**
+**TODO List created dynamically with Supervisor**
 
-## Installation
+Start app in iex `iex -S mix`
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+```
+# TodoApp supervisor should have started the TodoListSupervisor
 
-  1. Add `todo_list` to your list of dependencies in `mix.exs`:
+iex> Process.whereis(:todo_list_supervisor)
+#PID<0.129.0>
 
-    ```elixir
-    def deps do
-      [{:todo_list, "~> 0.1.0"}]
-    end
-    ```
+# Less typing with alias
 
-  2. Ensure `todo_list` is started before your application:
+iex> alias TodoApp.TodoListSupervisor
+TodoApp.TodoListSupervisor
 
-    ```elixir
-    def application do
-      [applications: [:todo_list]]
-    end
-    ```
+iex>  TodoListSupervisor.start_list(:test)
+{:ok, #PID<0.133.0>}
 
+iex> TodoList.get(:test)
+%{}
+
+iex> TodoList.add(:test, "eat breakfast")
+:ok
+
+iex> TodoList.get(:test)
+%{"eat breakfast" => :not_done}
+
+# Demonstrate that the process is restarted
+
+iex> Process.whereis(:test)
+#PID<0.133.0>
+
+iex> Process.whereis(:test) |> Process.exit(:kill)
+true
+
+iex> Process.whereis(:test)
+#PID<0.145.0>
+```
