@@ -1,40 +1,22 @@
 # TodoList
 
-**TODO List created dynamically with Supervisor**
+**TodoList GenServer to hold state of todolists**
 
 Start app in iex `iex -S mix`
 
 ```
-# TodoApp supervisor should have started the TodoListSupervisor
+iex> {:ok, pid} = TodoList.start_link
+{:ok, #PID<0.121.0>}
 
-iex> Process.whereis(:todo_list_supervisor)
-#PID<0.129.0>
-
-# Less typing with alias
-
-iex> alias TodoApp.TodoListSupervisor
-TodoApp.TodoListSupervisor
-
-iex>  TodoListSupervisor.start_list(:test)
-{:ok, #PID<0.133.0>}
-
-iex> TodoList.get(:test)
-%{}
-
-iex> TodoList.add(:test, "eat breakfast")
+iex> TodoList.add(pid, "clean")
 :ok
 
-iex> TodoList.get(:test)
-%{"eat breakfast" => :not_done}
+iex> TodoList.get(pid)
+%{"clean" => :not_done}
 
-# Demonstrate that the process is restarted
+iex> TodoList.complete(pid, "clean")
+:ok
 
-iex> Process.whereis(:test)
-#PID<0.133.0>
-
-iex> Process.whereis(:test) |> Process.exit(:kill)
-true
-
-iex> Process.whereis(:test)
-#PID<0.145.0>
+iex> TodoList.get(pid)
+%{"clean" => :done}
 ```
